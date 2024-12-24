@@ -1,24 +1,25 @@
-import { UniqueEntityID } from "@/core/unique-entity-id";
-import { Question } from "../../entreprise/entities/question";
-import { QuestionsRepository } from "../repositories/questions-repository";
-import { Either, right } from "@/core/either";
-import { QuestionAttachment } from "../../entreprise/entities/question-attachment";
-import { QuestionAttachmentList } from "../../entreprise/entities/question-attachment-list";
+import { UniqueEntityID } from '@/core/unique-entity-id'
+import { Question } from '../../entreprise/entities/question'
+import { QuestionsRepository } from '../repositories/questions-repository'
+import { Either, right } from '@/core/either'
+import { QuestionAttachment } from '../../entreprise/entities/question-attachment'
+import { QuestionAttachmentList } from '../../entreprise/entities/question-attachment-list'
+import { Injectable } from '@nestjs/common'
 
 interface CreateQuestionUseCaseRequest {
-  authorId: string;
-  title: string;
-  content: string;
-  attachmentsIds: string[];
+  authorId: string
+  title: string
+  content: string
+  attachmentsIds: string[]
 }
 
 type CreateQuestionUseCaseResponse = Either<
   null,
   {
-    question: Question;
+    question: Question
   }
->;
-
+>
+@Injectable()
 export class CreateQuestionUseCase {
   constructor(private questionsRepository: QuestionsRepository) {}
 
@@ -32,21 +33,21 @@ export class CreateQuestionUseCase {
       authorId: new UniqueEntityID(authorId),
       title,
       content,
-    });
+    })
 
     const questionAttachments = attachmentsIds.map((attachmentsId) => {
       return QuestionAttachment.create({
         attachmentId: new UniqueEntityID(attachmentsId),
         questionId: question.id,
-      });
-    });
+      })
+    })
 
-    question.attachments = new QuestionAttachmentList(questionAttachments);
+    question.attachments = new QuestionAttachmentList(questionAttachments)
 
-    await this.questionsRepository.create(question);
+    await this.questionsRepository.create(question)
 
     return right({
       question,
-    });
+    })
   }
 }
