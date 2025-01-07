@@ -1,12 +1,14 @@
 import { AggregateRoot } from '../entities/aggregate-root'
+import { UniqueEntityID } from '../entities/unique-entity-id'
 import { DomainEvent } from './domain-event'
-import { UniqueEntityID } from '../unique-entity-id'
 
 type DomainEventCallback = (event: unknown) => void
 
 export class DomainEvents {
   private static handlersMap: Record<string, DomainEventCallback[]> = {}
   private static markedAggregates: AggregateRoot<unknown>[] = []
+
+  public static shouldRun = true
 
   public static markAggregateForDispatch(aggregate: AggregateRoot<unknown>) {
     const aggregateFound = !!this.findMarkedAggregateByID(aggregate.id)
@@ -34,7 +36,7 @@ export class DomainEvents {
     return this.markedAggregates.find((aggregate) => aggregate.id.equals(id))
   }
 
-  public static dispatchEvenstsForAggregate(id: UniqueEntityID) {
+  public static dispatchEventsForAggregate(id: UniqueEntityID) {
     const aggregate = this.findMarkedAggregateByID(id)
 
     if (aggregate) {
@@ -57,7 +59,7 @@ export class DomainEvents {
     this.handlersMap[eventClassName].push(callback)
   }
 
-  public static clearHandler() {
+  public static clearHandlers() {
     this.handlersMap = {}
   }
 
@@ -69,6 +71,10 @@ export class DomainEvents {
     const eventClassName: string = event.constructor.name
 
     const isEventRegistered = eventClassName in this.handlersMap
+
+    if (!this.shouldRun) {
+      return
+    }
 
     if (isEventRegistered) {
       const handlers = this.handlersMap[eventClassName]

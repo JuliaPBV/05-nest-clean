@@ -1,3 +1,3 @@
-export interface UserCaseError {
-  message: string;
+export interface UseCaseError {
+  message: string
 }

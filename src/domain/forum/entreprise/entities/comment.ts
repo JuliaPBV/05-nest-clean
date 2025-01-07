@@ -1,11 +1,11 @@
 import { Entity } from '@/core/entities/entity'
-import { UniqueEntityID } from '@/core/unique-entity-id'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 export interface CommentProps {
   authorId: UniqueEntityID
   content: string
   createdAt: Date
-  updatedAt?: Date
+  updatedAt?: Date | null
 }
 
 export abstract class Comment<
@@ -18,6 +18,7 @@ export abstract class Comment<
   get content() {
     return this.props.content
   }
+
   set content(content: string) {
     this.props.content = content
     this.touch()

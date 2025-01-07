@@ -1,4 +1,4 @@
-import { UniqueEntityID } from '../unique-entity-id'
+import { UniqueEntityID } from './unique-entity-id'
 
 export abstract class Entity<Prosp> {
   private _id: UniqueEntityID
